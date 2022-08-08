@@ -105,7 +105,7 @@ def prompt_user():
             'type': 'confirm',
             'message': 'Do you want to continue?',
             'name': 'continue',
-            'default': True
+            'default': False
         }
     ]
     ans = prompt(question)
@@ -123,7 +123,7 @@ def main():
             }
         ]
         try:
-            r = prompt(main_question)['mq']
+            r = str(prompt(main_question)['mq'])
         except KeyboardInterrupt:
             return prompt_user()
         if r.startswith("/rpl"):
@@ -177,7 +177,8 @@ def main():
                 print(f"{c.WARNING}No playlists found!{c.ENDC}")
                 continue
             if isinstance(names, str):
-                print(f"{c.HEADER}{title.capitalize()} items:{c.ENDC}\n{c.OKBLUE}{names}{c.ENDC}\n")
+                num = len(names.split('\n'))
+                print(f"{c.HEADER}{title.capitalize()} items ({num}):{c.ENDC}\n{c.OKBLUE}{names}{c.ENDC}\n")
                 continue
             nms = ", ".join(names)
             print(f"Local Playlists: {c.OKBLUE}{nms}{c.ENDC}\n")
@@ -226,7 +227,10 @@ def main():
         # play a playlist url or a video url
         if "://" in r:
             if "list" in r or "playlist" in r:
-                playlist_itms = load_playlist(r[r.find("list=") + 1:])
+                playlist_itms = load_playlist(r[r.find("list=") + 5:])
+                if playlist_itms is None:
+                    print(f"{c.WARNING}No results!{c.ENDC}")
+                    continue
                 try:
                     index = show_list_results(playlist_itms, 'Playlist items:')['list']
                 except KeyboardInterrupt:
@@ -239,11 +243,11 @@ def main():
                 else:
                     return True
             s = play_music(r)
-            if s != 'Break':
+            if s[0] != 'Break':
                 continue
         # quit
         if r == "/q":
-            return prompt_user()
+            return False
         if r == '':
             continue
         # if none of the above are true then search for video
@@ -255,7 +259,7 @@ def main():
         if option['list'] == 'none':
             continue
         s = play_music(option['list'])
-        if s == 'Break':
+        if s[0] == 'Break':
             continue
 
 
@@ -266,6 +270,7 @@ if __name__ == '__main__':
             print(HELP)
             sys.exit()
     print(Figlet(font='slant').renderText("YT Player"))
+    
 
     while True:
         if EXIT:
@@ -273,4 +278,3 @@ if __name__ == '__main__':
 
         EXIT = not main()
     print(f"{c.OKCYAN}Closing YT player!{c.ENDC}")
-    input("Press any key to continue...")

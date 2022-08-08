@@ -5,6 +5,7 @@ from PyInquirer import prompt
 from googleapiclient.discovery import build
 from player import play_music
 
+
 youtube = build("youtube", 'v3', developerKey=YT_KEY)
 global playlist_items
 playlist_items = []
@@ -25,8 +26,6 @@ def load_playlist(playlistId, formatted: bool = True):
     playlist_list_dict = []
     if formatted:
         for i, item in enumerate(r['items']):
-            if i % 10 == 0 and i != 50 and i != 0:
-                playlist_items.append(('break', 'break', 'break'))
             snippet = item.get('snippet')
             title = snippet.get('title')
             channel = snippet.get("videoOwnerChannelTitle")
@@ -41,8 +40,7 @@ def load_playlist(playlistId, formatted: bool = True):
         playlist_list_dict.append({'name': 'Return', 'value': 'none'})
         return playlist_list_dict
     for item in r['items']:
-        playlist_list_dict.append((item.get("snippet").get("resourceId").get("videoId"),
-                                   item.get("snippet").get("title"), item.get("snippet").get("videoOwnerChannelTitle")))
+        playlist_list_dict.append((item.get("snippet").get("resourceId").get("videoId"), item.get("snippet").get("title"), item.get("snippet").get("videoOwnerChannelTitle")))
     return playlist_list_dict
 
 
@@ -96,25 +94,30 @@ def play_playlist(t):
     ]
     count = 0
     while len(item) != 0 and count < len(item):
-        if count % 10 == 0 and count != 0 and count != len(item):
-            conf = prompt(break_question)['conf']
-            if conf:
-                count += 1
-                continue
-            else:
-                playlist_items.clear()
-                return False
-        name, videoId = item.pop(count)[0] + " -> " + item.pop(count)[2], item.pop(count)[1]
+        name, videoId = item[count][0] + " -> " + item[count][2], item[count][1]
         print(f'{c.HEADER}Playing:{c.ENDC} {c.OKBLUE}{name}{c.ENDC}')
         s = play_music(videoId)
-        if s == 'Break':
+        if s[0] == 'Break':
             conf = prompt(break_question)['conf']
             if conf:
-                count += 1
+                if count < -len(item):
+                    count = 0
+                    continue
+                if s[1] == 0:
+                    count += 1
+                elif s[1] == -1:
+                    count -= 1
+                elif s[1] == 1:
+                    return True
                 continue
             else:
                 playlist_items.clear()
                 return False
-        count += 1
-    playlist_items.clear()  # Just in case if the list isn't empty
+        if s[1] == 0:
+            count += 1
+        elif s[1] == -1:
+            count -= 1
+        elif s[1] == 1:
+            return True
+    playlist_items.clear() # Just in case if the list isn't empty
     return True

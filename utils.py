@@ -50,7 +50,7 @@ def write_to(filepath: str, data: Union['str', 'dict'], indent: int, mode: str, 
 
 def write_history(filepath: str, timestamp, data: str):
     with open(filepath, 'a') as file:
-        file.write(f"{timestamp} - {data.encode('utf-8')}")
+        file.write(f"{timestamp} - {data}")
 
 
 def load_playlist_name(playlist_name):
@@ -74,7 +74,7 @@ def remove_playlist_name(playlist_name):
                     file, indent=4
                 )
             return n
-    return None
+    return None         
 
 
 def load_playlist_file():
