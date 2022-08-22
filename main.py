@@ -4,6 +4,7 @@ from PyInquirer import prompt
 from pyfiglet import Figlet
 import sys
 
+
 # Check if the folders exists
 if not os.path.exists(os.path.join(os.getcwd(), 'res')):
     os.mkdir('res')
@@ -19,7 +20,8 @@ if not os.path.exists(os.path.join(os.getcwd(), 'res', 'usr', 'playlist.json')):
             file,
             indent=4
         )
-        
+
+
 # Check if the youtube key is set or not
 try:
     from utils import COLORS as c, get_video_details, add_playlist, remove_playlist_name
@@ -54,6 +56,8 @@ except KeyError:
             file.write(f"\nYOUTUBE_API_KEY={key}\nMAX_PLAYLIST_ITEM={m_p_i}\nMAX_SEARCH_ITEM={m_s_i}\n")
 finally:
     from utils import COLORS as c, get_video_details, add_playlist
+
+
 from player import play_music
 from playlist import load_playlist, play_playlist, load_playlist_from_name, list_playlists
 from search import search_video
@@ -166,6 +170,7 @@ def main():
                 print(f"Added {c.OKBLUE}{name}{c.ENDC} to playlist -> {c.HEADER}{title.capitalize()}{c.ENDC}")
                 continue
         
+        
         # list playlists or items from a particular playlist
         if r.startswith("/lpl"):
             title = r.replace("/lpl", "").strip()
@@ -184,6 +189,7 @@ def main():
             print(f"Local Playlists: {c.OKBLUE}{nms}{c.ENDC}\n")
             continue
             
+        
         # play a playlist
         if r.startswith('/cpl'):
             lists = load_playlist_from_name(r.replace("/cpl ", ''))
@@ -202,6 +208,7 @@ def main():
             else:
                 return True
 
+        
         # play video url
         if r.startswith("/v"):
             play_music(r.replace("/v ", ''))
@@ -224,6 +231,8 @@ def main():
                 continue
             else:
                 return True
+        
+        
         # play a playlist url or a video url
         if "://" in r:
             if "list" in r or "playlist" in r:
@@ -250,6 +259,8 @@ def main():
             return False
         if r == '':
             continue
+        
+        
         # if none of the above are true then search for video
         search_results = search_video(r)
         if search_results is None:
@@ -269,8 +280,10 @@ if __name__ == '__main__':
         if args[0] == "--help":
             print(HELP)
             sys.exit()
-    print(Figlet(font='slant').renderText("YT Player"))
     
+    # remove the errors printed 
+    print("\033[F" + " " * 100)
+    print("\033[F" + Figlet(font='slant').renderText("YT Player"))
 
     while True:
         if EXIT:
@@ -278,3 +291,4 @@ if __name__ == '__main__':
 
         EXIT = not main()
     print(f"{c.OKCYAN}Closing YT player!{c.ENDC}")
+    sys.exit()

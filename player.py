@@ -7,6 +7,10 @@ from utils import write_to, write_history
 
 
 return_value = 0
+instance = vlc.Instance()
+# disable the vlc logging
+instance.log_unset()
+player = instance.media_player_new()
 
 
 def get_audio_url(video_url):
@@ -25,18 +29,23 @@ def on_key_press(key):
     elif key == Key.media_play_pause:
         if player.is_playing():
             player.pause()
+            print("Player: Paused", end='\r')
         else:
             player.play()
+            print("Player: Playing", end='\r')
+            
+
 
 def on_key_release(key):
     global return_value
-    if key == Key.end:
+    if key == Key.f1:
         return_value = 1
         player.stop()
 
 
+
 def play_music(url):
-    global player, return_value
+    global player, return_value, instance
     return_value = 0
     is_opening = False
     is_playing = True
@@ -46,10 +55,6 @@ def play_music(url):
         print("Interrupted by the user!")
         return "Break"
     
-    instance = vlc.Instance()
-    # disable the vlc logging
-    instance.log_unset()
-    player = instance.media_player_new()
     media = instance.media_new(audio_url)
     with Listener(on_press=on_key_press, on_release=on_key_release) as listener:
         player_states = ["State.Playing", "State.NothingSpecial", "State.Opening", "State.Paused"]
@@ -59,7 +64,7 @@ def play_music(url):
             player.play()
         except Exception as e:
             write_to("res/error.txt", f"{datetime.datetime.now()} - {str(e)} -> `{url}`\n", 0, 'a', None, False)
-            print("Error in MRL!\nRetrying...\r\r")
+            print("Error in MRL!\nRetrying...\033[F\033[F")
             time.sleep(5)
             return play_music("https://youtu.be/" + url.replace("https://www.youtube.com/watch?v=", ""))
 

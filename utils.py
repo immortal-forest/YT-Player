@@ -6,6 +6,7 @@ from pafy.util import GdataError
 from dotenv import load_dotenv
 from googleapiclient.errors import HttpError
 
+
 load_dotenv(os.path.join(os.getcwd(), 'res', 'usr', '.env'))
 
 
@@ -33,6 +34,7 @@ class COLORS:
 YT_KEY = os.environ['YOUTUBE_API_KEY']
 MAX_PLAYLIST = os.environ['MAX_PLAYLIST_ITEM']
 MAX_SEARCH = os.environ['MAX_SEARCH_ITEM']
+
 
 
 def write_to(filepath: str, data: Union['str', 'dict'], indent: int, mode: str, encoding, is_json: bool):
@@ -74,7 +76,7 @@ def remove_playlist_name(playlist_name):
                     file, indent=4
                 )
             return n
-    return None         
+    return None      
 
 
 def load_playlist_file():
