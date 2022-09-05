@@ -6,4 +6,4 @@ A CLI-based YouTube music player
 
 Use media keys: play/pause, next, previous.
 
-Also to stop the player use `END` key.
+Also to stop the player use `F1` key.

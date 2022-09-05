@@ -99,25 +99,18 @@ def play_playlist(t):
         s = play_music(videoId)
         if s[0] == 'Break':
             conf = prompt(break_question)['conf']
-            if conf:
-                if count < -len(item):
-                    count = 0
-                    continue
-                if s[1] == 0:
-                    count += 1
-                elif s[1] == -1:
-                    count -= 1
-                elif s[1] == 1:
-                    return True
-                continue
-            else:
+            if not conf:
                 playlist_items.clear()
                 return False
+        if count < -len(item):
+            count = 0
+            continue
         if s[1] == 0:
             count += 1
         elif s[1] == -1:
             count -= 1
         elif s[1] == 1:
+            playlist_items.clear()
             return True
     playlist_items.clear() # Just in case if the list isn't empty
     return True

@@ -1,66 +1,4 @@
-import json
-import os
-from PyInquirer import prompt
-from pyfiglet import Figlet
-import sys
-
-
-# Check if the folders exists
-if not os.path.exists(os.path.join(os.getcwd(), 'res')):
-    os.mkdir('res')
-    os.mkdir('res/usr')
-if not os.path.exists(os.path.join(os.getcwd(), 'res', 'usr')) and os.path.exists(os.path.join(os.getcwd(), 'res')):
-    os.mkdir('res/usr')
-if not os.path.exists(os.path.join(os.getcwd(), 'res', 'usr', 'playlist.json')):
-    with open("res/usr/playlist.json", 'w') as file:
-        json.dump(
-            {
-                "Playlist": []
-            },
-            file,
-            indent=4
-        )
-
-
-# Check if the youtube key is set or not
-try:
-    from utils import COLORS as c, get_video_details, add_playlist, remove_playlist_name
-except KeyError:
-    api_key = [
-        {
-            'type': 'input',
-            'message': 'Your API key',
-            'name': 'key'
-        }
-
-    ]
-    key = prompt(api_key)['key']
-    max_s = [
-        {
-            'type': 'input',
-            'message': 'Max search item',
-            'name': 'key'
-        }
-
-    ]
-    m_s_i  = prompt(max_s)['key']
-    max_p = [
-        {
-            "type": 'input',
-            'message': "Max playlist item",
-            'name': 'key'
-        }
-    ]
-    m_p_i = prompt(max_p)['key']
-    with open("res/usr/.env", 'w') as file:
-            file.write(f"\nYOUTUBE_API_KEY={key}\nMAX_PLAYLIST_ITEM={m_p_i}\nMAX_SEARCH_ITEM={m_s_i}\n")
-finally:
-    from utils import COLORS as c, get_video_details, add_playlist
-
-
-from player import play_music
-from playlist import load_playlist, play_playlist, load_playlist_from_name, list_playlists
-from search import search_video
+from utils import COLORS as c, get_video_details, add_playlist, remove_playlist_name
 
 
 EXIT = False
@@ -186,7 +124,7 @@ def main():
                 print(f"{c.HEADER}{title.capitalize()} items ({num}):{c.ENDC}\n{c.OKBLUE}{names}{c.ENDC}\n")
                 continue
             nms = ", ".join(names)
-            print(f"Local Playlists: {c.OKBLUE}{nms}{c.ENDC}\n")
+            print(f"{c.HEADER}Local Playlists:{c.ENDC} {c.OKBLUE}{nms}{c.ENDC}\n")
             continue
             
         
@@ -275,11 +213,18 @@ def main():
 
 
 if __name__ == '__main__':
+    import sys
     args = sys.argv[1:]
     if len(args) != 0:
         if args[0] == "--help":
             print(HELP)
             sys.exit()
+    from PyInquirer import prompt
+    from pyfiglet import Figlet
+
+    from player import play_music
+    from playlist import load_playlist, play_playlist, load_playlist_from_name, list_playlists
+    from search import search_video
     
     # remove the errors printed 
     print("\033[F" + " " * 100)

@@ -76,8 +76,8 @@ def remove_playlist_name(playlist_name):
                     file, indent=4
                 )
             return n
-    return None      
-
+    return None
+            
 
 def load_playlist_file():
     with open("res/usr/playlist.json", 'r') as file:

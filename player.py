@@ -29,7 +29,7 @@ def on_key_press(key):
     elif key == Key.media_play_pause:
         if player.is_playing():
             player.pause()
-            print("Player: Paused", end='\r')
+            print("Player: Paused ", end='\r')
         else:
             player.play()
             print("Player: Playing", end='\r')
@@ -49,14 +49,15 @@ def play_music(url):
     return_value = 0
     is_opening = False
     is_playing = True
-    try:
-        audio_url = get_audio_url(url)
-    except KeyboardInterrupt:
-        print("Interrupted by the user!")
-        return "Break"
     
-    media = instance.media_new(audio_url)
     with Listener(on_press=on_key_press, on_release=on_key_release) as listener:
+        try:
+            audio_url = get_audio_url(url)
+        except KeyboardInterrupt:
+            print("Interrupted by the user!")
+            return "Break"
+        
+        media = instance.media_new(audio_url)
         player_states = ["State.Playing", "State.NothingSpecial", "State.Opening", "State.Paused"]
         try:
             media.get_mrl()
